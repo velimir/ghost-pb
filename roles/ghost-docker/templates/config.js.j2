@@ -1,0 +1,10 @@
+// Managed by Ansible, do not edit!
+
+var path = require('path'),
+    config;
+
+config = {
+    production: {{ ghost_config | to_nice_json }}
+};
+
+module.exports = config;

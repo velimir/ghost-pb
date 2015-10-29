@@ -1,0 +1,16 @@
+---
+- hosts: blogs
+  roles:
+    - common
+    - ghost-docker
+
+  post_tasks:
+    # docker module produces facts about started containers, though
+    # that post task helps when more than one container were started
+    # from different roles/tasks
+    - include: register_ghost_containers.yml
+
+- hosts: balancers
+  roles:
+    - common
+    - haproxy

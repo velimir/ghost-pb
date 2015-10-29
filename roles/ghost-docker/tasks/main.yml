@@ -1,0 +1,20 @@
+---
+# pre-requirements
+- name: Add ghost configurations
+  template:
+    src: config.js.j2
+    dest: "{{ ghost_docker_config_path }}/config.js"
+    mode: 0600
+  become: yes
+
+- name: Run ghost container
+  docker:
+    name: "{{ ghost_container_name }}"
+    image: "{{ docker_image }}:{{ docker_image_version }}"
+    pull: always
+    state: reloaded
+    volumes:
+      - "{{ ghost_docker_config_path }}/config.js:/var/www/ghost/config.js:ro"
+    env:
+      NODE_ENV: "{{ ghost_environment }}"
+    restart_policy: on-failure

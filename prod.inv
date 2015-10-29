@@ -1,0 +1,5 @@
+[blogs]
+ec2-blog
+
+[balancers]
+ec2-blog

@@ -1,0 +1,5 @@
+---
+docker_image: haproxy
+haproxy_docker_config_path: /var/ansible/haproxy
+haproxy_docker_links: []
+haproxy_backend_name: nodes

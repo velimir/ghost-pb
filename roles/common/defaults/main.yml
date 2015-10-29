@@ -1,0 +1,2 @@
+---
+ghost_docker_config_path: "/var/ansible/{{ docker_image }}"

@@ -1,0 +1,21 @@
+---
+- name: Register ghost containers
+  shell: "docker ps --filter='name=ghost' | tail -n+2 | cut -f1 -d' ' | xargs docker inspect"
+  register: docker_inspect
+
+- name: Compose backends fact
+  set_fact:
+    backend:
+      name: "{{ item.Name | regex_replace('^.*/(.+)$', '\\\\1') }}"
+      address: "{{ item.Name | regex_replace('^.*/(.+)$', '\\\\1') }}"
+      port: "{{ ghost_port }}"
+  with_items: "{{ docker_inspect.stdout | from_json }}"
+  register: backends
+- set_fact:
+    backends: "{{ backends.results | map(attribute='ansible_facts.backend') | list }}"
+- set_fact:
+    haproxy_link: "{{ item.name }}:{{ item.name }}"
+  with_items: "{{ backends }}"
+  register: haproxy_links
+- set_fact:
+    haproxy_docker_links: "{{ haproxy_links.results | map(attribute='ansible_facts.haproxy_link') | list }}"

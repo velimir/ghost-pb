@@ -1,0 +1,21 @@
+---
+docker_image: velimir/ghost
+docker_image_version: latest
+ghost_container_name: ghost
+ghost_install_dir: /var/www/ghost
+
+ghost_environment: production
+ghost_port: 2368
+ghost_config:
+  url: "https://127.0.0.1"
+  forceAdminSSL: true
+  mail: {}
+  database:
+    client: "sqlite3"
+    connection:
+      filename: "{{ ghost_install_dir }}/content/data/ghost.db"
+  debug: false
+  server:
+    host: 127.0.0.1
+    port: "{{ ghost_port }}"
+  logging: false

@@ -1,0 +1,39 @@
+---
+- name: Prepare container config directory
+  file:
+    name: "{{ haproxy_docker_config_path }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0600
+  become: yes
+
+- name: Copy cert to config directory
+  copy:
+    content: "{{ certificate | mandatory }}"
+    dest: "{{ haproxy_docker_config_path }}/cert.pem"
+    mode: 0600
+  become: yes
+
+- name: Configure the haproxy config file with running containers
+  template:
+    src: haproxy.cfg.j2
+    dest: "{{ haproxy_docker_config_path }}/haproxy.cfg"
+    mode: 0600
+  become: yes
+
+- name: Run haproxy container
+  docker:
+    name: haproxy
+    image: "{{ docker_image }}"
+    pull: always
+    state: reloaded
+    links: "{{ haproxy_docker_links }}"
+    restart_policy: on-failure
+    volumes: "{{ haproxy_docker_config_path }}:/usr/local/etc/haproxy"
+    expose:
+      - 80
+      - 443
+    ports:
+      - "80:80"
+      - "443:443"
+    publish_all_ports: yes

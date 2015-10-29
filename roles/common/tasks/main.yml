@@ -1,0 +1,54 @@
+---
+- name: Find docker executable
+  shell: which docker
+  register: find_docker
+  ignore_errors: yes
+
+- name: Install docker engine
+  shell: "curl -sSL https://get.docker.com/ | sh"
+  when: find_docker | failed
+  become: yes
+
+  # remove that one ansible is upgraded
+- name: downgrade docker to 1.8.2
+  apt:
+    name: docker-engine=1.8.2-0~trusty
+    state: present
+    force: yes
+  become: yes
+
+- name: Find pip executable
+  shell: which pip
+  register: find_pip
+  ignore_errors: yes
+
+- name: Get PIP installer
+  get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /tmp/get-pip.py
+  when: find_pip | failed
+
+- name: Install pip
+  shell: "python /tmp/get-pip.py"
+  when: find_pip | failed
+  become: yes
+
+- name: Install docker-py
+  pip: name=docker-py
+  become: yes
+
+- name: Enable docker service
+  service: name=docker state=started enabled=yes
+  become: yes
+
+- name: Add ec2-user to docker group
+  user: name={{ ansible_user_id }} group=docker
+  become: yes
+
+- name: Prepare container config directory
+  file:
+    name: "{{ ghost_docker_config_path }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0600
+  become: yes
