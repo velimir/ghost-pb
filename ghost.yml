@@ -1,4 +1,9 @@
 ---
+- hosts: dbs
+  roles:
+    - common
+    - mysql
+
 - hosts: blogs
   roles:
     - common

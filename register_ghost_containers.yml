@@ -6,8 +6,8 @@
 - name: Compose backends fact
   set_fact:
     backend:
-      name: "{{ item.Name | regex_replace('^.*/(.+)$', '\\\\1') }}"
-      address: "{{ item.Name | regex_replace('^.*/(.+)$', '\\\\1') }}"
+      name: "{{ item.Name | regex_replace('^.*/(.+)$', '\\1') }}"
+      address: "{{ item.Name | regex_replace('^.*/(.+)$', '\\1') }}"
       port: "{{ ghost_port }}"
   with_items: "{{ docker_inspect.stdout | from_json }}"
   register: backends

@@ -1,0 +1,51 @@
+---
+- name: Run MySQL container
+  docker:
+    name: "{{ mysql_container_name }}"
+    image: "{{ docker_image }}:latest"
+    pull: always
+    state: reloaded
+    volumes:
+      - "{{ mysql_docker_config_path }}:/var/lib/mysql:rw"
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+      MYSQL_DATABASE: "{{ mysql_database }}"
+      MYSQL_USER: "{{ mysql_user }}"
+      MYSQL_PASSWORD: "{{ mysql_password }}"
+    restart_policy: on-failure
+
+- name: Wait MySQL port
+  wait_for: host={{ docker_containers[0]['NetworkSettings']['IPAddress'] }} port=3306
+
+- name: Copy MySQL dumps
+  copy: src={{ item }} dest=/tmp/dumps/
+  with_fileglob:
+    - "{{ mysql_dump_path }}/*.sql"
+
+- name: Find all dump files
+  shell: find /tmp -wholename '/tmp/dumps/*.sql'
+  register: dump_files
+
+- name: Import MySQL dumps
+  shell: docker run -i --link {{ mysql_container_name }}:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -u{{ mysql_user }} -p"{{ mysql_password }}" {{ mysql_database }}' < "{{ item }}"
+  with_items: "{{ dump_files.stdout_lines }}"
+
+- name: Dump cleanup
+  file: path=/tmp/dumps state=absent
+
+- name: Create backup folder
+  file: path=/var/backups/ghost state=directory mode="u+rw,g=rx,o=rx"
+  become: yes
+
+- name: Confiure mysql ghost backups
+  copy: src=mysql_backup dest=/usr/local/bin/mysql_backup mode="u+rw,g+rx,o+rx"
+  become: yes
+
+- name: Add backup sript as a cron job
+  cron:
+    name: "ghost mysql backup"
+    user: root
+    special_time: daily
+    state: present
+    job: "/usr/local/bin/mysql_backup"
+  become: yes

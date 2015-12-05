@@ -4,7 +4,45 @@ var path = require('path'),
     config;
 
 config = {
-    production: {{ ghost_config | to_nice_json }}
+    production: {
+        "database": {
+            "client": {{ ghost_database_client }},
+            "connection": {
+                "charset": "utf8",
+                "database": {{ ghost_database_database }},
+                "host": {{ ghost_database_host }},
+                "password": {{ ghost_database_password }},
+                "user": {{ ghost_database_user }}
+            }
+        },
+        "debug": false,
+        "forceAdminSSL": true,
+        "logging": false,
+        "mail": {
+            "options": {
+                "auth": {
+                    "pass": {{ ghost_mail_pass }},
+                    "user": {{ ghost_mail_user }}
+                },
+                "service": "Mailgun"
+            },
+            "transport": "SMTP"
+        },
+        "server": {
+            "host": {{ ghost_host }},
+            "port": {{ ghost_port }}
+        },
+        "storage": {
+            "active": "ghost-s3",
+            "ghost-s3": {
+                "accessKeyId": {{ ghost_s3_key_id }},
+                "bucket": {{ ghost_s3_bucket }},
+                "region": {{ ghost_s3_region }},
+                "secretAccessKey": {{ ghost_s3_access_key }}
+            }
+        },
+        "url": {{ ghost_url }}
+    }
 };
 
 module.exports = config;

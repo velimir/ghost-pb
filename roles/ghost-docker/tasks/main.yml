@@ -13,6 +13,7 @@
     image: "{{ docker_image }}:{{ docker_image_version }}"
     pull: always
     state: reloaded
+    links: "mysql:mysql"
     volumes:
       - "{{ ghost_docker_config_path }}/config.js:/var/www/ghost/config.js:ro"
     env:

@@ -1,5 +1,8 @@
 [blogs]
-ec2-blog
+ec2-inst
 
 [balancers]
-ec2-blog
+ec2-inst
+
+[dbs]
+ec2-inst

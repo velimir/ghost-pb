@@ -2,20 +2,31 @@
 docker_image: velimir/ghost
 docker_image_version: latest
 ghost_container_name: ghost
+ghost_docker_config_path: "{{ docker_config_path }}"
 ghost_install_dir: /var/www/ghost
 
 ghost_environment: production
 ghost_port: 2368
-ghost_config:
-  url: "https://127.0.0.1"
-  forceAdminSSL: true
-  mail: {}
-  database:
-    client: "sqlite3"
-    connection:
-      filename: "{{ ghost_install_dir }}/content/data/ghost.db"
-  debug: false
-  server:
-    host: 127.0.0.1
-    port: "{{ ghost_port }}"
-  logging: false
+
+ghost_database_client: '"mysql"'
+ghost_database_database: process.env.MYSQL_ENV_MYSQL_DATABASE
+ghost_database_host: '"mysql"'
+ghost_database_password: process.env.MYSQL_ENV_MYSQL_PASSWORD
+ghost_database_user: process.env.MYSQL_ENV_MYSQL_USER
+
+ghost_debug: false
+ghost_logging: false
+ghost_force_admin_ssl: true
+
+ghost_mail_pass: '"pwd"'
+ghost_mail_user: '"user"'
+
+ghost_host: '"127.0.0.1"'
+ghost_post: 2368
+
+ghost_s3_key_id: '"keyid"'
+ghost_s3_bucket: '"bucket"'
+ghost_s3_region: '"eu-west-1"'
+ghost_s3_access_key: '"secretaccesskey"'
+
+ghost_url: '"https://127.0.0.1"'

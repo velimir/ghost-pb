@@ -1,0 +1,9 @@
+---
+mysql_container_name: mysql
+docker_image: mysql
+mysql_docker_config_path: "{{ docker_config_path }}"
+mysql_root_password: "{{ lookup('password', 'root.pwd') }}"
+mysql_database: ghost
+mysql_user: ghost
+mysql_password: "{{ lookup('password', 'mysql.pwd') }}"
+mysql_dump_path: "files"

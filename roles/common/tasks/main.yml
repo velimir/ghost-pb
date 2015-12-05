@@ -9,14 +9,6 @@
   when: find_docker | failed
   become: yes
 
-  # remove that one ansible is upgraded
-- name: downgrade docker to 1.8.2
-  apt:
-    name: docker-engine=1.8.2-0~trusty
-    state: present
-    force: yes
-  become: yes
-
 - name: Find pip executable
   shell: which pip
   register: find_pip
@@ -47,8 +39,8 @@
 
 - name: Prepare container config directory
   file:
-    name: "{{ ghost_docker_config_path }}"
+    name: "{{ docker_config_path }}"
     state: directory
     owner: "{{ ansible_user_id }}"
-    mode: 0600
+    mode: a+rx
   become: yes
