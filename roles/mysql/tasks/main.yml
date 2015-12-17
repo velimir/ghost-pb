@@ -45,7 +45,9 @@
   cron:
     name: "ghost mysql backup"
     user: root
-    special_time: daily
+    minute: 0
+    hour: 12
     state: present
     job: "/usr/local/bin/mysql_backup"
+    cron_file: mysql_backup
   become: yes

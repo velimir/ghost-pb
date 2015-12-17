@@ -5,7 +5,7 @@ backupfolder="/var/backups/ghost"
 fullpathbackupfile="$backupfolder/$filename"
 logfile="$backupfolder/"backup_log_"$(date +'%Y_%m')".txt
 echo "mysqldump started at $(date +'%d-%m-%Y %H:%M:%S')" >> "$logfile"
-docker run -it --link mysql:mysql --rm mysql sh -c \
+docker run --link mysql:mysql --rm mysql sh -c \
        'exec mysqldump -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD" ghost' \
        | gzip > "$fullpathbackupfile"
 echo "mysqldump finished at $(date +'%d-%m-%Y %H:%M:%S')" >> "$logfile"
